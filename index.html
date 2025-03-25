@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MiGO.io</title>
+    <style>
+:root {
+  /* Modern color palette */
+  --primary: #6c5ce7;
+  --primary-dark: #5649c0;
+  --secondary: #00cec9;
+  --accent: #fd79a8;
+  --background: #f9f9ff;
+  --card-bg: #ffffff;
+  --text-dark: #2d3436;
+  --text-light: #636e72;
+  --success: #00b894;
+  --warning: #fdcb6e;
+  --danger: #d63031;
+  --online: #55efc4;
+  --offline: #dfe6e9;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-dark);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(108, 92, 231, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(0, 206, 201, 0.05) 0%, transparent 20%);
+}
+
+#setup {
+  background-color: var(--card-bg);
+  width: 100%;
+  max-width: 800px;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+#setup:hover {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+h2 {
+  color: var(--primary);
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+}
+
+button {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+.friend-tabs {
+  display: flex;
+  width: 100%;
+  max-width: 800px;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--background);
+}
+
+.friend-tabs::-webkit-scrollbar {
+  height: 6px;
+}
+
+.friend-tabs::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+.friend-tabs::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  border-radius: 3px;
+}
+
+.friend-tab {
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  border-radius: 12px 12px 0 0;
+  margin-right: 0.5rem;
+  font-weight: 600;
+  color: var(--text-light);
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.friend-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.friend-tab:hover {
+  background-color: rgba(108, 92, 231, 0.1);
+  color: var(--primary);
+}
+
+.friend-tab.active {
+  background-color: var(--card-bg);
+  color: var(--primary);
+  border-bottom-color: transparent;
+  box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.05);
+}
+
+.friend-tab.active::after {
+  background-color: var(--primary);
+}
+
+.chat-container {
+  background-color: var(--card-bg);
+  width: 100%;
+  max-width: 800px;
+  height: 500px;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--background);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.chat-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  border-radius: 4px;
+}
+
+.message {
+  max-width: 70%;
+  padding: 1rem;
+  border-radius: 16px;
+  margin-bottom: 1rem;
+  position: relative;
+  word-wrap: break-word;
+  line-height: 1.5;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.message.local {
+  background-color: var(--primary);
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.message.remote {
+  background-color: #f0f2f5;
+  color: var(--text-dark);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.message.system {
+  background-color: transparent;
+  color: var(--text-light);
+  align-self: center;
+  text-align: center;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+}
+
+.request {
+  background-color: rgba(253, 121, 168, 0.1);
+  border: 1px solid rgba(253, 121, 168, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  text-align: center;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(253, 121, 168, 0.2); }
+  70% { box-shadow: 0 0 0 10px rgba(253, 121, 168, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(253, 121, 168, 0); }
+}
+
+.request p {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.request-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.accept-btn {
+  background-color: var(--success);
+  min-width: 100px;
+}
+
+.deny-btn {
+  background-color: var(--danger);
+  min-width: 100px;
+}
+
+#messageArea {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  gap: 1rem;
+  background-color: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+#messageInput {
+  flex-grow: 1;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 2px solid #e0e0e0;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+#messageInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+}
+
+#sendButton {
+  background-color: var(--primary);
+  color: white;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+#sendButton:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+}
+
+#yourId {
+  display: inline-block;
+  background-color: rgba(108, 92, 231, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-family: monospace;
+  margin: 0.5rem 0;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Status indicators */
+.status-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-online {
+  background-color: var(--online);
+  box-shadow: 0 0 8px var(--online);
+}
+
+.status-offline {
+  background-color: var(--offline);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+  }
+  
+  .chat-container {
+    height: 400px;
+  }
+  
+  .message {
+    max-width: 85%;
+  }
+  
+  #messageArea {
+    flex-direction: column;
+  }
+  
+  #sendButton {
+    width: 100%;
+  }
+}
+
+/* Animation for new messages */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.new-message {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Floating action button */
+.floating-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.floating-btn:hover {
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 8px 25px rgba(108, 92, 231, 0.5);
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: flex;
+  padding: 1rem;
+  background-color: #f0f2f5;
+  border-radius: 16px;
+  margin-bottom: 1rem;
+  align-self: flex-start;
+  max-width: 120px;
+}
+
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--text-light);
+  border-radius: 50%;
+  margin: 0 2px;
+  animation: typingAnimation 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingAnimation {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-5px); }
+}
+
+/* Timestamp styling */
+.message-timestamp {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 4px;
+  display: block;
+  text-align: right;
+}
+</style>
+</head>
+<body>
+    <div id="setup">
+        <h2>Multi-User Chat</h2>
+        <div id="nameEntry">
+            <input type="text" id="nameInput" placeholder="Enter your name">
+            <button onclick="setName()">Start Chatting</button>
+        </div>
+        <div id="idDisplay" style="display:none;">
+            <p>Your ID: <span id="yourId"></span></p>
+            <p>Share this ID with friends to connect</p>
+            <input type="text" id="friendId" placeholder="Enter friend's ID">
+            <button onclick="connectToFriend()">Connect</button>
+        </div>
+    </div>
+
+    <div id="friendTabs" class="friend-tabs"></div>
+    
+    <div id="chatContainer">
+        <!-- Chat containers will be added here dynamically -->
+    </div>
+
+    <div id="messageArea">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        // Simple signaling simulation using BroadcastChannel
+        const chatContainer = document.getElementById('chatContainer');
+        const messageInput = document.getElementById('messageInput');
+        let myId = Math.random().toString(36).substring(2, 10);
+        let myName = "";
+        let connections = {};
+        let activeChat = null;
+        let pendingRequests = {};
+        const signalingChannel = new BroadcastChannel('multi_user_chat');
+        
+        // Handle incoming signals
+        signalingChannel.onmessage = (event) => {
+            const signal = event.data;
+            
+            if (signal.to !== myId) return; // Not for us
+            
+            if (signal.type === 'connect') {
+                // Only show request if we haven't seen it before
+                if (!pendingRequests[signal.from]) {
+                    pendingRequests[signal.from] = true;
+                    showConnectionRequest(signal.from, signal.name);
+                }
+            }
+            else if (signal.type === 'accept') {
+                // Our connection request was accepted
+                addConnection(signal.from, signal.name);
+                addMessageToChat(signal.from, `Connected to ${signal.name}`, 'system');
+            }
+            else if (signal.type === 'deny') {
+                // Our connection request was denied
+                addMessageToChat(signal.from, `${signal.name} declined your connection request`, 'system');
+            }
+            else if (signal.type === 'message') {
+                // Received a message
+                addMessageToChat(signal.from, `${signal.name}: ${signal.text}`, 'remote');
+            }
+        };
+        
+        function setName() {
+            myName = document.getElementById('nameInput').value.trim();
+            if (!myName) {
+                alert("Please enter your name");
+                return;
+            }
+            
+            document.getElementById('nameEntry').style.display = 'none';
+            document.getElementById('idDisplay').style.display = 'block';
+            document.getElementById('messageArea').style.display = 'block';
+            document.getElementById('yourId').textContent = myId;
+            
+            // Add welcome message to a default chat (will be hidden until first connection)
+            const defaultChatId = 'welcome';
+            createChatTab(defaultChatId, 'Welcome');
+            addMessageToChat(defaultChatId, `Welcome ${myName}! Your ID is ${myId}`, 'system');
+            addMessageToChat(defaultChatId, "Share this ID with friends to connect", 'system');
+            switchChat(defaultChatId);
+        }
+        
+        function connectToFriend() {
+            const friendId = document.getElementById('friendId').value.trim();
+            if (!friendId) {
+                alert("Please enter your friend's ID");
+                return;
+            }
+            
+            if (friendId === myId) {
+                alert("You can't connect to yourself!");
+                return;
+            }
+            
+            // Send connection request
+            signalingChannel.postMessage({
+                type: 'connect',
+                from: myId,
+                to: friendId,
+                name: myName
+            });
+            
+            // Create a pending chat tab
+            createChatTab(friendId, `Pending: ${friendId}`);
+            addMessageToChat(friendId, `Connection request sent to ${friendId}`, 'system');
+            switchChat(friendId);
+        }
+        
+        function showConnectionRequest(fromId, fromName) {
+            // Create a new chat tab for this connection if it doesn't exist
+            if (!document.getElementById(`tab-${fromId}`)) {
+                createChatTab(fromId, `Request: ${fromName}`);
+            }
+            
+            // Add the request message (only if not already present)
+            const chat = document.getElementById(`chat-${fromId}`);
+            if (chat && !chat.querySelector('.request')) {
+                const requestDiv = document.createElement('div');
+                requestDiv.className = 'request';
+                requestDiv.innerHTML = `
+                    <p>${fromName} wants to connect</p>
+                    <div class="request-buttons">
+                        <button class="accept-btn" onclick="acceptConnection('${fromId}', '${fromName}')">Accept</button>
+                        <button class="deny-btn" onclick="denyConnection('${fromId}', '${fromName}')">Deny</button>
+                    </div>
+                `;
+                chat.appendChild(requestDiv);
+                chat.scrollTop = chat.scrollHeight;
+            }
+            
+            // Switch to this chat
+            switchChat(fromId);
+        }
+        
+        function acceptConnection(fromId, fromName) {
+            // Remove the request message
+            const chat = document.getElementById(`chat-${fromId}`);
+            const request = chat.querySelector('.request');
+            if (request) request.remove();
+            
+            // Update the tab name
+            updateTabName(fromId, fromName);
+            
+            // Add to connections
+            addConnection(fromId, fromName);
+            
+            // Send acceptance
+            signalingChannel.postMessage({
+                type: 'accept',
+                from: myId,
+                to: fromId,
+                name: myName
+            });
+            
+            addMessageToChat(fromId, `You are now connected with ${fromName}`, 'system');
+        }
+        
+        function denyConnection(fromId, fromName) {
+            // Remove the request message
+            const chat = document.getElementById(`chat-${fromId}`);
+            const request = chat.querySelector('.request');
+            if (request) request.remove();
+            
+            // Send denial
+            signalingChannel.postMessage({
+                type: 'deny',
+                from: myId,
+                to: fromId,
+                name: myName
+            });
+            
+            addMessageToChat(fromId, `You declined connection with ${fromName}`, 'system');
+        }
+        
+        function addConnection(connectionId, connectionName) {
+            connections[connectionId] = {
+                name: connectionName,
+                connected: true
+            };
+            updateTabName(connectionId, connectionName);
+        }
+        
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || !activeChat) return;
+            
+            // Only send to active chat if it's a connected friend
+            if (connections[activeChat] && connections[activeChat].connected) {
+                signalingChannel.postMessage({
+                    type: 'message',
+                    from: myId,
+                    to: activeChat,
+                    text: message,
+                    name: myName
+                });
+                
+                addMessageToChat(activeChat, `You: ${message}`, 'local');
+                messageInput.value = '';
+            }
+        }
+        
+        // Chat tab management functions
+        function createChatTab(chatId, tabName) {
+            // Create tab if it doesn't exist
+            if (!document.getElementById(`tab-${chatId}`)) {
+                const tab = document.createElement('div');
+                tab.className = 'friend-tab';
+                tab.id = `tab-${chatId}`;
+                tab.textContent = tabName;
+                tab.onclick = () => switchChat(chatId);
+                document.getElementById('friendTabs').appendChild(tab);
+                
+                // Create chat container if it doesn't exist
+                if (!document.getElementById(`chat-${chatId}`)) {
+                    const chatDiv = document.createElement('div');
+                    chatDiv.className = 'chat-container hidden';
+                    chatDiv.id = `chat-${chatId}`;
+                    chatContainer.appendChild(chatDiv);
+                }
+            }
+        }
+        
+        function updateTabName(chatId, newName) {
+            const tab = document.getElementById(`tab-${chatId}`);
+            if (tab) tab.textContent = newName;
+        }
+        
+        function removeChatTab(chatId) {
+            const tab = document.getElementById(`tab-${chatId}`);
+            const chat = document.getElementById(`chat-${chatId}`);
+            if (tab) tab.remove();
+            if (chat) chat.remove();
+            
+            // If we're removing the active chat, switch to welcome
+            if (activeChat === chatId) {
+                switchChat('welcome');
+            }
+        }
+        
+        function switchChat(chatId) {
+            // Hide all chats
+            document.querySelectorAll('.chat-container').forEach(chat => {
+                chat.classList.add('hidden');
+            });
+            
+            // Deactivate all tabs
+            document.querySelectorAll('.friend-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected chat
+            const chat = document.getElementById(`chat-${chatId}`);
+            if (chat) chat.classList.remove('hidden');
+            
+            // Activate tab
+            const tab = document.getElementById(`tab-${chatId}`);
+            if (tab) tab.classList.add('active');
+            
+            // Set as active
+            activeChat = chatId;
+            
+            // Focus message input
+            messageInput.focus();
+        }
+        
+        function addMessageToChat(chatId, text, type) {
+            const chat = document.getElementById(`chat-${chatId}`);
+            if (!chat) return;
+            
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            
+            // Handle HTML content (for connection requests)
+            if (text.startsWith('<')) {
+                div.innerHTML = text;
+            } else {
+                div.textContent = text;
+            }
+            
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+    </script>
+</body>
+</html>
